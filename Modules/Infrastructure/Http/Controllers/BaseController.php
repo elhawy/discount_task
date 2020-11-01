@@ -1,33 +1,31 @@
-?php
+<?php
 
 namespace Modules\Infrastructure\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 
 abstract class BaseController extends Controller
 {
     public function ok($data)
     {
-        return response()->json($data,Response::HTTP_OK);
+        return response()->json($data, Response::HTTP_OK);
     }
 
     public function accepted($data)
     {
-        return response()->json($data,Response::HTTP_ACCEPTED);
+        return response()->json($data, Response::HTTP_ACCEPTED);
     }
 
     public function created($data)
     {
-        return response()->json($data,Response::HTTP_CREATED);
+        return response()->json($data, Response::HTTP_CREATED);
     }
 
     //TODO:CHECK
-    public function successResponse($data,$statusCode = Response::HTTP_OK)
+    public function successResponse($data, $statusCode = Response::HTTP_OK)
     {
-        return response()->json($data,$statusCode);
+        return response()->json($data, $statusCode);
     }
 
     //TODO:TBD (revisiting the need of the below method and error response structure)
@@ -35,7 +33,7 @@ abstract class BaseController extends Controller
     {
         $data = array(
             'code' => $errorCode,
-            'message' => $message
+            'message' => $message,
 
         );
 

@@ -7,4 +7,5 @@ use Modules\Products\Entities\Product;
 
 interface ProductServiceInterface
 {
+    public function getProductsByNames(array $productsNames, array $withRelation);
 }

@@ -4,17 +4,26 @@ namespace Modules\Orders\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Modules\Orders\Http\Requests\CreateOrderRequest;
+use Modules\Orders\Services\Interfaces\OrderServiceInterface;
+use Modules\Infrastructure\Http\Controllers\BaseController;
 
-class OrdersController extends Controller
+class OrdersController extends BaseController
 {
+
+    private $orderService;
+
+    public function __construct(OrderServiceInterface $orderService)
+    {
+        $this->orderService = $orderService;
+    }
+
     /**
      * Display a listing of the resource.
      * @return Renderable
      */
     public function index()
     {
-        return view('orders::index');
     }
 
     /**
@@ -23,7 +32,6 @@ class OrdersController extends Controller
      */
     public function create()
     {
-        return view('orders::create');
     }
 
     /**
@@ -31,9 +39,11 @@ class OrdersController extends Controller
      * @param Request $request
      * @return Renderable
      */
-    public function store(Request $request)
+    public function store(CreateOrderRequest $request)
     {
-        //
+        $cart = $request->cart;
+        $orderDetails = $this->orderService->createOrder($cart);
+        return response()->json(["order" => $orderDetails]);
     }
 
     /**
@@ -43,7 +53,6 @@ class OrdersController extends Controller
      */
     public function show($id)
     {
-        return view('orders::show');
     }
 
     /**
@@ -53,7 +62,6 @@ class OrdersController extends Controller
      */
     public function edit($id)
     {
-        return view('orders::edit');
     }
 
     /**

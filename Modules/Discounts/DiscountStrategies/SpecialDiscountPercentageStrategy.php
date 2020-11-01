@@ -1,27 +1,32 @@
 <?php
 
-namespace Module\Discounts\DiscountStrategies;
+namespace Modules\Discounts\DiscountStrategies;
+
+use Modules\Discounts\DiscountStrategies\AbstractDiscountStrategy;
+use Modules\Discounts\DiscountStrategies\DiscountStrategyInterface;
+use Modules\Discounts\Entities\Lookups\DiscountTypeLookups;
 
 class SpecialDiscountPercentageStrategy extends AbstractDiscountStrategy implements DiscountStrategyInterface
 {
-    public function applayDiscount($price)
+    public function applyDiscount() : float
     {
-        return max($price - (($this->discount->amount / 100) * $price), 0);
+        if ($this->checkDiscount()) {
+            $qty = $this->calculateDiscountQty();
+            return $qty * max($this->price - (($this->discount->amount / 100) * $this->price), 0);
+        } else {
+            return $this->price;
+        }
     }
 
-    public function checkDiscount($productsIDS)
+    public function checkDiscount() : bool
     {
-        $countedIDS = array_count_values($productsIDS);
-        if (!$this->discount->specialOffers->isEmpty()) {
-            foreach ($this->discount->specialOffers as $specialOffer) {
-                if (!in_array($specialOffer->id, $productsIDS) ||
-                    ($specialOffer->qty != $countedIDS[$specialOffer->id])) {
-                    return false;
-                } else {
-                    continue;
-                }
-            }
+        if (isset($this->countedCartProductIDS[$this->productID]) &&
+            !empty($this->discount->specialDiscount) &&
+            $this->discount->type == DiscountTypeLookups::SPECIAL_PERCENTAGE &&
+            $this->discount->specialDiscount->qty <= $this->countedCartProductIDS[$this->discount->specialDiscount->id]) {
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 }

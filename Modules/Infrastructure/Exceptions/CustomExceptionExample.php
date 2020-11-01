@@ -1,29 +1,27 @@
 <?php
- 
 
- namespace Modules\Infrastructure\Exceptions;
+namespace Modules\Infrastructure\Exceptions;
 
- Use Modules\Infrastructure\Exceptions\AbstractCoralException;
- use Symfony\Component\HttpFoundation\Response;
- use Modules\Infrastructure\Exceptions\ErrorCodes;
+use Modules\Infrastructure\Exceptions\AbstractCustomException;
+use Modules\Infrastructure\Exceptions\ErrorCodes;
+use Symfony\Component\HttpFoundation\Response;
 
-class CustomException extends AbstractCoralException
+class CustomExceptionExample extends AbstractCustomException
 {
-      
-     function setErrorCode()
-     {
-         $this->_errorcode = ErrorCodes::MY_ERROR_CODE_EXAMPLE ;
-     }
 
-      function setStatusCode()
-      {
+    public function setErrorCode()
+    {
+        $this->_errorcode = ErrorCodes::MY_ERROR_CODE_EXAMPLE;
+    }
+
+    public function setStatusCode()
+    {
         $this->_statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
-      }
+    }
 
-     function setMessage()
-     {  
+    public function setMessage()
+    {
         $this->_message = "My Custom Exception Message";
-     }       
-    
-  
+    }
+
 }

@@ -3,13 +3,21 @@
 namespace Modules\Orders\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Infrastructure\Http\Traits\Hashidable;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
+use Modules\Products\Entities\Product;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
     use Hashidable;
+    use HasFactory;
+
     protected $table = 'orders';
+
+    protected $guarded = [];
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'products_orders');
+    }
 }

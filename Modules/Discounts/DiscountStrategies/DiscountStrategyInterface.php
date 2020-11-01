@@ -1,9 +1,9 @@
 <?php
 
-namespace Module\Discounts\DiscountStrategies;
+namespace Modules\Discounts\DiscountStrategies;
 
 interface DiscountStrategyInterface
 {
-    public function applyDiscount($price): double;
-    public function checkDiscount(array $productsIDS = []) : boolean;
+    public function applyDiscount(): float;
+    public function checkDiscount() : bool;
 }

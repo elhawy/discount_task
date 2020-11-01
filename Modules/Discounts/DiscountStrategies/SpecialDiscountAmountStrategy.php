@@ -1,30 +1,32 @@
 <?php
 
-namespace Module\Discounts\DiscountStrategies;
+namespace Modules\Discounts\DiscountStrategies;
 
 use Modules\Discounts\DiscountStrategies\AbstractDiscountStrategy;
 use Modules\Discounts\DiscountStrategies\DiscountStrategyInterface;
+use Modules\Discounts\Entities\Lookups\DiscountTypeLookups;
 
 class SpecialDiscountAmountStrategy extends AbstractDiscountStrategy implements DiscountStrategyInterface
 {
-    public function applayDiscount($price)
+    public function applyDiscount() : float
     {
-        return $price - $this->discount->amount;
+        if ($this->checkDiscount()) {
+            $qty = $this->calculateDiscountQty();
+            return $qty * ($this->price - $this->discount->amount);
+        } else {
+            return $this->price;
+        }
     }
 
-    public function checkSpecialDiscount($productsIDS)
+    public function checkDiscount() : bool
     {
-        $countedIDS = array_count_values($productsIDS);
-        if (!$this->discount->specialOffers->isEmpty()) {
-            foreach ($this->discount->specialOffers as $specialOffer) {
-                if (!in_array($specialOffer->id, $productsIDS) ||
-                    ($specialOffer->qty != $countedIDS[$specialOffer->id])) {
-                    return false;
-                } else {
-                    continue;
-                }
-            }
+        if (isset($this->countedCartProductIDS[$this->productID]) &&
+            !empty($this->discount->specialDiscount) &&
+            $this->discount->type == DiscountTypeLookups::SPECIAL_AMOUNT &&
+            $this->discount->specialOffer->qty <= $this->countedCartProductIDS[$this->discount->specialDiscount->id]) {
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 }

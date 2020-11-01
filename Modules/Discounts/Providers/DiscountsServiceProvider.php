@@ -5,7 +5,9 @@ namespace Modules\Discounts\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Modules\Discounts\Repositories\Interfaces\DiscountRepositoryInterface;
+use Modules\Discounts\Services\Interfaces\DiscountServiceInterface;
 use Modules\Discounts\Repositories\DiscountRepository;
+use Modules\Discounts\Services\DiscountService;
 
 class DiscountsServiceProvider extends ServiceProvider
 {
@@ -41,6 +43,7 @@ class DiscountsServiceProvider extends ServiceProvider
     {
         $this->app->register(RouteServiceProvider::class);
         $this->app->bind(DiscountRepositoryInterface::class, DiscountRepository::class);
+        $this->app->bind(DiscountServiceInterface::class, DiscountService::class);
     }
 
     /**

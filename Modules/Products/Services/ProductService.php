@@ -3,7 +3,7 @@
 namespace Modules\Products\Services;
 
 use Modules\Products\Repositories\Interfaces\ProductRepositoryInterface;
-use Modules\Products\Services\nterfaces\ProductServiceInterface;
+use Modules\Products\Services\Interfaces\ProductServiceInterface;
 
 class ProductService implements ProductServiceInterface
 {
@@ -12,5 +12,10 @@ class ProductService implements ProductServiceInterface
     public function __construct(ProductRepositoryInterface $productRepository)
     {
         $this->productRepository = $productRepository;
+    }
+
+    public function getProductsByNames(array $productsNames, array $withRelation)
+    {
+        return $this->productRepository->getProductsByNames($productsNames, $withRelation);
     }
 }

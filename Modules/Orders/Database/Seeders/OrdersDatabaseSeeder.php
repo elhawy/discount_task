@@ -2,6 +2,7 @@
 
 namespace Modules\Orders\Database\Seeders;
 
+use Modules\Orders\Database\Seeders\DiscountOrderDatabaseSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,6 +17,6 @@ class OrdersDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        // $this->call("OthersTableSeeder");
+        $this->call(DiscountOrderDatabaseSeeder::class);
     }
 }

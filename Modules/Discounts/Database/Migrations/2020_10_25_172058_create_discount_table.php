@@ -16,9 +16,10 @@ class CreateDiscountTable extends Migration
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_active')->default(0);
-            $table->boolean('from')->default();
+            $table->timestamp('from')->useCurrent();
+            $table->float('amount');
             $table->enum('type', ['percentage', 'amount', 'special_percentage', 'special_amount'])->default('percentage');
-            $table->boolean('to')->default();
+            $table->timestamp('to')->useCurrent();
             $table->timestamps();
         });
     }
