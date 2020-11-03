@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Response;
 class HttpClient
 {
 
-    public function send(string $url, array $payload, $method = 'POST', $headers = null): Response
+    public function send(string $url, $method = 'POST', array $payload = [], $headers = []): Response
     {
         return app(Client::class)->request($method, $url, ["headers" => $headers, "json" => $payload]);
     }
