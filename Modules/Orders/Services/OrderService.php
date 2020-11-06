@@ -3,10 +3,11 @@
 namespace Modules\Orders\Services;
 
 use Modules\Discounts\Services\Interfaces\DiscountServiceInterface;
+use Modules\Infrastructure\Helpers\ConvertCurrencyConverterFetcher;
 use Modules\Orders\Repositories\Interfaces\OrderRepositoryInterface;
 use Modules\Orders\Services\Interfaces\OrderServiceInterface;
+use Modules\Orders\Entities\Order;
 use Modules\Products\Services\Interfaces\ProductServiceInterface;
-use Modules\Infrastructure\Helpers\ConvertCurrencyConverterFetcher;
 
 class OrderService implements OrderServiceInterface
 {
@@ -17,14 +18,10 @@ class OrderService implements OrderServiceInterface
         $this->orderRepository = $orderRepository;
     }
 
-    public function createOrder(array $cart, $currency = 'USD'): array
+    public function createOrder(array $cart, $currency): Order
     {
-        $test = new ConvertCurrencyConverterFetcher(1, 'EGP');
-        dd($test->convert());
         \DB::beginTransaction();
         try {
-            $productsOrder = [];
-            $order = [];
             $productService = app(ProductServiceInterface::class);
             $discountService = app(DiscountServiceInterface::class);
             $countedProducts = array_count_values($cart);
@@ -32,31 +29,68 @@ class OrderService implements OrderServiceInterface
             if ($productsCart->isEmpty()) {
                 return [];
             }
-            $countedProductsIDS = [];
+            $order["sub_total"] = 0;
+            $order["total"] = 0;
+            $productOrderQty = [];
+            $productsOrder = [];
             foreach ($productsCart as $product) {
-                $countedProductsIDS[$product->id] = $countedProducts[$product->name];
+                $productOrderQty[$product->id] = $countedProducts[$product->name];
             }
             foreach ($productsCart as $key => $product) {
-                $order["sub_total"] = response["sub_total"] + $countedProductsIDS[$product->id] * $product->price;
-                $productOrder[$key]["product_id"] = $product->id;
-                $productOrder[$key]["qty"] = $countedProductsIDS[$product->id];
-                $productOrder[$key]["discount_id"] = null;
+                $productsOrder[$key]["qty"] = $productOrderQty[$product->id];
+                $productTotalPrice = ($productsOrder[$key]["qty"] * $product->price);
+                $productsOrder[$key]["product_id"] = $product->id;
+                $productsOrder[$key]["qty"] = $productOrderQty[$product->id];
+                $productsOrder[$key]["discount_id"] = null;
+                $productsOrder[$key]["discount_off"] = null;
                 $discount = ($product->discounts->where('is_active', 1)->where('to', '>', \Carbon\Carbon::now())->first());
+                $order["sub_total"] = $order["sub_total"] + ($productsOrder[$key]["qty"] * $product->price);
                 if (!empty($discount)) {
-                    $discountedPrice = $discountService->calculateDiscount($discount, $product->price, $countedProductsIDS, $product->id);
+                    $discountedPrice = $discountService->calculateDiscount($discount, $product->price, $productOrderQty, $product->id);
                     $productsOrder[$key]["discount_id"] = $discount->id;
+                    $productsOrder[$key]["discount_off"] = $productTotalPrice - $discountedPrice;
                     $order["total"] = $order["total"] + $discountedPrice;
                 } else {
-                    $order["total"] = $order["total"] + $countedProductsIDS[$product->id] * $product->price;
+                    $order["total"] = $order["total"] + $productTotalPrice;
                 }
             }
-
+            $currencyData = $this->convertOrderPrice(1, $currency);
+            $order["taxes"] = config('orders.taxes') * $order["sub_total"];
+            $order["total"] = $order["total"] + $order["taxes"];
+            $order["currency_ratio"] = $currencyData['ratio'];
+            $order["currency_id"] = $currencyData['id'];
             $createdOrder = $this->orderRepository->create($order);
             $createdOrder->products()->attach($productsOrder);
+            //get all one time rather than eager load
+            $this->orderRepository->where('id', $createdOrder->id)
+                ->with(['products', 'productsOrder.discount', 'currency'])->first();
             \DB::commit();
-            return ["order_id" => $createdOrder->id, "total_price" => $createdOrder->price];
+            return $createdOrder;
         } catch (Exception $e) {
             \DB::rollBack();
         }
+    }
+
+    public function convertOrderPrice(int $amount, string $to) : array
+    {
+        $currency = $this->orderRepository->getCurrencyByCode($to);
+        $from = config('orders.default_currency') ?? 'USD';
+        if ($to == $from) {
+            return ["id" => $currency->id ?? '', "ratio" => 1];
+        }
+        $currencyConverter = app(ConvertCurrencyConverterFetcher::class, ["amount" => $amount, "to" => $to, "from" => $from]);
+        $currencyInfo = $currencyConverter->convert();
+        if (!empty($currency) && !empty($currencyInfo['converted'])) {
+            $currencyData["id"] = $currency->id;
+            $currencyData["ratio"] = $currencyInfo["ratio"];
+        } elseif (empty($currency) && !empty($currencyInfo['converted'])) {
+            $currency = [
+                "code" => $to, "name" => $currencyInfo['converted']["name"], "symbol" => $currencyInfo["converted"]["symbol"],
+            ];
+            $createdCurrency = $this->orderRepository->createCurrency($currency);
+            $currencyData["id"] = $createdCurrency->id;
+            $currencyData["ratio"] = $currencyInfo["ratio"];
+        }
+        return $currencyData;
     }
 }

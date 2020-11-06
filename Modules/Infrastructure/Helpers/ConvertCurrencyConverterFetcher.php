@@ -25,6 +25,9 @@ class ConvertCurrencyConverterFetcher
     }
     public function convert(): array
     {
+        if (strtolower($this->from) == strtolower($this->to)) {
+            return [];
+        }
         $httpClient = app(HttpClient::class);
         try {
             $response = $httpClient->send($this->url, 'GET');
@@ -44,40 +47,51 @@ class ConvertCurrencyConverterFetcher
 
     protected function extractConverted(string $content)
     {
-        $currencyToNameReg = '/<div class="to"><span class="green">*.(?<converted_qty>\d+,?\d+)<\/span> (?<converted_name>\w+ \w+)<\/div>/m';
+        $currencyToNameReg = '/<div class="to"><span class="green">(?<converted_qty>[0-9\s?]*,?\d{1,})<\/span> (?<converted_name>\w+ \w+)<\/div>/m';
 
         $status = preg_match($currencyToNameReg, $content, $matches);
         if ($status) {
-            $currencyConverted = $matches['converted_name'];
-            $convertedQty = $matches['converted_qty'];
+            $currencyConverted = $matches['converted_name']??'';
+            $convertedQty = $this->formatNumber($matches['converted_qty'] ?? 0);
         } else {
             $currencyConverted = "";
             $convertedQty = 0;
 
         }
-
-        $currencyFromNameReg = '/<div class="from">.*>(?<from_qty>\d+,?\d*)<\/span> (?<from_name>\w+\s?\w*) =<\/div>/mi';
+        $currencyFromNameReg = '/<div class="from">.*>(?<from_qty>[0-9\s?]*,?\d{1,})<\/span> (?<from_name>\w+\s?\w*) =<\/div>/m';
         preg_match($currencyFromNameReg, $content, $matches);
-        $currencyFrom = $matches['from_name'];
+        $currencyFrom = $matches['from_name']??'';
+        $fromQty = $this->formatNumber($matches['from_qty'] ?? 0);
 
-        $symbolRegex = '/<div class="bysymbol">(?<from_symbol>.*;)(?<from_qty>\d+,?\d*) = <span>(?<to_symbol>.*;)(?<to_qty>\d+,?\d+)<\/span><\/div>/m';
+        $symbolRegex = '/<div class="bysymbol">(?<from_symbol>.*;)(?<from_qty>\d+,?\d*) = <span>(?<converted_symbol>.*;)(?<converted_qty>\d+,?\d+)<\/span><\/div>/m';
         $status = preg_match($symbolRegex, $content, $matches);
-        $fromSymbol = html_entity_decode($matches["from_symbol"]);
-        $fromQty = $matches["from_qty"];
-        $convertedSymbol = html_entity_decode($matches["to_symbol"]);
-        $convertedQty = $matches["to_qty"];
-
+        $fromSymbol = html_entity_decode($matches["from_symbol"]??'');
+        $convertedSymbol = html_entity_decode($matches["converted_symbol"]??'');
+        
+        $fromQty = empty($fromQty) ? $this->formatNumber($matches["from_qty"] ?? 0) :  $fromQty;
+        
+        if ($fromQty != $this->amount) {
+            return [];
+        }
+        $convertedQty = (empty($convertedQty)) ? $this->formatNumber($matches["converted_qty"]) : $convertedQty;
+        $ratio = $convertedQty/$fromQty;
         return [
-            "converted" => [
-                "value" => $convertedQty,
-                "symbol" => $convertedSymbol,
-                "name" => $currencyConverted,
-            ],
-            'from' => [
+            "ratio" => $ratio,
+            "from" => [
                 "value" => $fromQty,
                 "symbol" => $fromSymbol,
                 "name" => $currencyFrom,
             ],
+            'converted' => [
+                "value" => $convertedQty,
+                "symbol" => $convertedSymbol,
+                "name" => $currencyConverted,
+            ],
         ];
+    }
+
+    private function formatNumber($number)
+    {
+        return floatval(str_replace(',', '.', str_replace('.', '', str_replace(' ', '', $number))));
     }
 }

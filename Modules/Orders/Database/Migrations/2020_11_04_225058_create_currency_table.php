@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOrdersTable extends Migration
+class CreateCurrencyTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('currency', function (Blueprint $table) {
             $table->id();
-            $table->decimal('currency_ratio', 8, 2)->nullable();//against default
-            $table->unsignedBigInteger('currency_id')->nullable();
-            $table->decimal('taxes', 8, 2);
-            $table->decimal('sub_total', 8, 2);
-            $table->decimal('total', 8, 2);
+            $table->string('code')->unique();
+            $table->string('symbol');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('currency');
     }
 }

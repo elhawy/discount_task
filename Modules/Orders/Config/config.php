@@ -1,5 +1,7 @@
 <?php
 
 return [
-    'name' => 'Orders'
+    'name' => 'Orders',
+    'taxes' => .14,
+    'default_currency' => 'USD',
 ];

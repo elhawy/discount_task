@@ -4,9 +4,10 @@ namespace Modules\Orders\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
+use Modules\Infrastructure\Http\Controllers\BaseController;
 use Modules\Orders\Http\Requests\CreateOrderRequest;
 use Modules\Orders\Services\Interfaces\OrderServiceInterface;
-use Modules\Infrastructure\Http\Controllers\BaseController;
+use Modules\Orders\Transformers\OrderResource;
 
 class OrdersController extends BaseController
 {
@@ -41,9 +42,8 @@ class OrdersController extends BaseController
      */
     public function store(CreateOrderRequest $request)
     {
-        $cart = $request->cart;
-        $orderDetails = $this->orderService->createOrder($cart);
-        return response()->json(["order" => $orderDetails]);
+        $createdOrder = $this->orderService->createOrder($request->cart, $request->currency);
+        return new OrderResource($createdOrder);
     }
 
     /**
