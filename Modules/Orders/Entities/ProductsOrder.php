@@ -32,4 +32,9 @@ class ProductsOrder extends Model
     {
         return $this->belongsTo(Order::class);
     }
+
+    protected static function newFactory()
+    {
+        return \Modules\Orders\Database\factories\ProductsOrderFactory::new();
+    }
 }

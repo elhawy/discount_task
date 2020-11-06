@@ -11,17 +11,16 @@ class CustomExceptionExample extends AbstractCustomException
 
     public function setErrorCode()
     {
-        $this->_errorcode = ErrorCodes::MY_ERROR_CODE_EXAMPLE;
+        $this->errorcode = ErrorCodes::MY_ERROR_CODE_EXAMPLE;
     }
 
     public function setStatusCode()
     {
-        $this->_statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
+        $this->statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
     }
 
     public function setMessage()
     {
-        $this->_message = "My Custom Exception Message";
+        $this->message = "Custom Exception Message";
     }
-
 }

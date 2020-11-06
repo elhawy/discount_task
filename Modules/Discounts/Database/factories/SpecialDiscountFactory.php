@@ -22,7 +22,7 @@ class SpecialDiscountFactory extends Factory
         return [
             'discount_id' => (Discount::factory()->create())->id,
             'product_id' => (Product::factory()->create())->id,
-            'qty' => $this->faker->numberBetween(1, 10),
+            'qty' => $this->faker->numberBetween(1, 4),
         ];
     }
 }

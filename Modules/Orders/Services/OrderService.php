@@ -2,6 +2,7 @@
 
 namespace Modules\Orders\Services;
 
+use Modules\Orders\Exceptions\InvalidCurrencyException;
 use Modules\Discounts\Services\Interfaces\DiscountServiceInterface;
 use Modules\Infrastructure\Helpers\ConvertCurrencyConverterFetcher;
 use Modules\Orders\Repositories\Interfaces\OrderRepositoryInterface;
@@ -78,6 +79,7 @@ class OrderService implements OrderServiceInterface
         if ($to == $from) {
             return ["id" => $currency->id ?? '', "ratio" => 1];
         }
+        $currencyData = [];
         $currencyConverter = app(ConvertCurrencyConverterFetcher::class, ["amount" => $amount, "to" => $to, "from" => $from]);
         $currencyInfo = $currencyConverter->convert();
         if (!empty($currency) && !empty($currencyInfo['converted'])) {
@@ -90,6 +92,9 @@ class OrderService implements OrderServiceInterface
             $createdCurrency = $this->orderRepository->createCurrency($currency);
             $currencyData["id"] = $createdCurrency->id;
             $currencyData["ratio"] = $currencyInfo["ratio"];
+        }
+        if (empty($currencyData)) {
+            throw new InvalidCurrencyException();
         }
         return $currencyData;
     }

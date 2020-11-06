@@ -32,4 +32,9 @@ class Order extends Model
     {
         return $this->belongsTo(Currency::class);
     }
+
+    protected static function newFactory()
+    {
+        return \Modules\Orders\Database\factories\OrderFactory::new();
+    }
 }

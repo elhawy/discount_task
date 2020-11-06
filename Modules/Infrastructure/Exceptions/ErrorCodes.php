@@ -5,6 +5,5 @@ namespace Modules\Infrastructure\Exceptions;
 
 class ErrorCodes
 {
-    public const INVALID_DISCOUNT = 400;
-    public const UNAUTHORIZED_ACTION = 403;
+    public const INVALID_CURRENCY = 422;
 }

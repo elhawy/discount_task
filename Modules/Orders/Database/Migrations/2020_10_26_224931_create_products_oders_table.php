@@ -16,7 +16,7 @@ class CreateProductsOdersTable extends Migration
         Schema::create('products_orders', function (Blueprint $table) {
             $table->id();
             $table->integer('qty');
-            $table->decimal('discount_off', 8, 2)->nullable();
+            $table->decimal('discount_off', 8, 4)->nullable();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('discount_id')->nullable(true);

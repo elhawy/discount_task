@@ -15,11 +15,11 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->decimal('currency_ratio', 8, 2)->nullable();//against default
+            $table->decimal('currency_ratio', 8, 4)->nullable();//against default
             $table->unsignedBigInteger('currency_id')->nullable();
-            $table->decimal('taxes', 8, 2);
-            $table->decimal('sub_total', 8, 2);
-            $table->decimal('total', 8, 2);
+            $table->decimal('taxes', 8, 4);
+            $table->decimal('sub_total', 8, 4);
+            $table->decimal('total', 8, 4);
             $table->timestamps();
         });
     }

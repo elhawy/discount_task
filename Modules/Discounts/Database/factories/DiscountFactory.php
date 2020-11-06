@@ -2,9 +2,10 @@
 
 namespace Modules\Discounts\Database\factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Discounts\Entities\Discount;
+use Modules\Discounts\Entities\Lookups\DiscountTypeLookups;
 
 class DiscountFactory extends Factory
 {
@@ -18,13 +19,20 @@ class DiscountFactory extends Factory
     public function definition()
     {
         return [
-            'type' => $this->faker->randomElement([
-                "percentage", "amount", "special_amount", "special_percentage",
-            ]),
+            'type' => DiscountTypeLookups::PERCENTAGE,
             'is_active' => 1,
             'amount' => $this->faker->numberBetween(1, 90),
             'from' => \Carbon\Carbon::now(),
             'to' => (\Carbon\Carbon::now())->add(5, 'day'),
         ];
+    }
+
+    public function specialPercentage()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'type' => DiscountTypeLookups::SPECIAL_PERCENTAGE,
+            ];
+        });
     }
 }
