@@ -10,7 +10,23 @@
 </ul>
 
 <p>
-	<strong> this our source web site <a href="https://usd.mconvert.net"> https://usd.mconvert.net</a>< i scraping  the converted values and it details like name symbol value and then calculate the ration on this date ot get order price as requested on this date</strong>
+	<strong> This My source web site On Currency Convert <a href="https://usd.mconvert.net"> https://usd.mconvert.net</a>< i use <strong> scraping </strong> to get the converted values and it details like name symbol then calculate the ration on this date to get order price as requested on this date</strong> after scrapping the data returned like the flowing code
+<p>
+	<p> <strong> convert 1 USD To EGP </strong>
+	<code> [
+		  "ratio" => 15.69
+		  "from" => [
+		    "value" => 1.0
+		    "symbol" => "$"
+		    "name" => "US Dollar"
+		  ]
+		  "converted" => [
+		    "value" => 15.69
+		    "symbol" => "£"
+		    "name" => "Egyptian Pound"
+		  ]
+		]
+</code>
 </p>
 
 ## Installation
@@ -24,7 +40,7 @@
 		<li> <strong> php artisan key:generate </strong> </li>
 		<li> <strong> php artisan module:migrate </strong> </li>
 		<li> <strong> php artisan module:seed </strong> </li>
-		<li> <strong> ./vendor/bin/phpunit </strong> if test should pass correctly</li>
+		<li> <strong> ./vendor/bin/phpunit </strong> test should pass correctly</li>
 		<li> <strong> php artisan serve </strong> </li>
 	</ul>
 
@@ -68,9 +84,5 @@
 
 ## Warning
 
-<p> <strong>shoes</strong> and <strong>Shoes</strong> Laravel is insensitive not case sensitive  on <strong>exists</strong> so i handed it from code and it this product will be ignored </p>
+<p> <strong>shoes</strong> and <strong>Shoes</strong> Laravel is insensitive not case sensitive  on <strong>exists</strong> so i handle it from code and this product will be ignored and not calculated to save time i detect this issue later as it is <strong>  database issue </strong></p>
 
-
-## License
-
-The Laravel framework 
