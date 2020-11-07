@@ -75,7 +75,7 @@ class ConvertCurrencyConverterFetcher
         }
         $convertedQty = (empty($convertedQty)) ? $this->formatNumber($matches["converted_qty"]) : $convertedQty;
         $ratio = $convertedQty/$fromQty;
-        return dd([
+        return [
             "ratio" => $ratio,
             "from" => [
                 "value" => $fromQty,
@@ -87,7 +87,7 @@ class ConvertCurrencyConverterFetcher
                 "symbol" => $convertedSymbol,
                 "name" => $currencyConverted,
             ],
-        ]);
+        ];
     }
 
     private function formatNumber($number)
