@@ -14,16 +14,16 @@
 <p>
 	<p> <strong> convert 1 USD To EGP </strong>
 	<code> [
-		  "ratio" => 15.69
+		  "ratio" => 15.69,
 		  "from" => [
-		    "value" => 1.0
-		    "symbol" => "$"
-		    "name" => "US Dollar"
-		  ]
+		    "value" => 1.0,
+		    "symbol" => "$",
+		    "name" => "US Dollar",
+		  ],
 		  "converted" => [
-		    "value" => 15.69
-		    "symbol" => "£"
-		    "name" => "Egyptian Pound"
+		    "value" => 15.69,
+		    "symbol" => "£",
+		    "name" => "Egyptian Pound",
 		  ]
 		]
 </code>
