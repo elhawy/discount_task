@@ -11,6 +11,3 @@
 |
  */
 
-Route::prefix('orders')->group(function () {
-    Route::post('/store', 'OrdersController@store');
-});

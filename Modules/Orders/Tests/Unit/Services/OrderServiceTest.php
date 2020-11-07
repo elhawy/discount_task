@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Orders\Tests\Feature\Http\Controllers;
+namespace Modules\Orders\Tests\Unit\Services;
 
 use Faker\Factory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;

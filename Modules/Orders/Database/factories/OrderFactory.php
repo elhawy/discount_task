@@ -2,13 +2,11 @@
 
 namespace Modules\Orders\Database\factories;
 
-use Modules\Orders\Entities\OrderFactory;
+use Modules\Orders\Entities\Order;
 
-class ProductsOrderFactory
+class OrderFactory
 {
-
-
-    protected $model = OrderFactory::class;
+    protected $model = Order::class;
 
     /**
      * Define the model's default state.
