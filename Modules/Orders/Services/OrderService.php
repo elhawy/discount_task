@@ -35,9 +35,15 @@ class OrderService implements OrderServiceInterface
             $productOrderQty = [];
             $productsOrder = [];
             foreach ($productsCart as $product) {
+                if (empty($countedProducts[$product->name])) {
+                    continue;
+                }
                 $productOrderQty[$product->id] = $countedProducts[$product->name];
             }
             foreach ($productsCart as $key => $product) {
+                if (empty($productOrderQty[$product->id])) {
+                    continue;
+                }
                 $productsOrder[$key]["qty"] = $productOrderQty[$product->id];
                 $productTotalPrice = ($productsOrder[$key]["qty"] * $product->price);
                 $productsOrder[$key]["product_id"] = $product->id;
@@ -74,11 +80,12 @@ class OrderService implements OrderServiceInterface
 
     public function convertOrderPrice(int $amount, string $to) : array
     {
-        $currency = $this->orderRepository->getCurrencyByCode($to);
         $from = config('orders.default_currency') ?? 'USD';
-        if ($to == $from) {
+        if (empty($to) || $from == $to) {
+            $currency = $this->orderRepository->getCurrencyByCode($from);
             return ["id" => $currency->id ?? '', "ratio" => 1];
         }
+        $currency = $this->orderRepository->getCurrencyByCode($to);
         $currencyData = [];
         $currencyConverter = app(ConvertCurrencyConverterFetcher::class, ["amount" => $amount, "to" => $to, "from" => $from]);
         $currencyInfo = $currencyConverter->convert();

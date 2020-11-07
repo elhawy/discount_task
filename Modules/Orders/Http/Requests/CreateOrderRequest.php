@@ -16,10 +16,11 @@ class CreateOrderRequest extends FormRequest
         return [
             'cart' => 'array|required',
             'cart.*' => [
+                'exists:Modules\Products\Entities\Product,name',
                 'string',
                 'required',
-                "exists:Modules\Products\Entities\Product,name"
-            ]
+            ],
+            'currency' => 'string'
         ];
     }
 

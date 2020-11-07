@@ -93,7 +93,7 @@ class OrdersControllerTest extends TestCase
             ->with($cart, 'USD')
             ->andReturn($order)->getMock();
         $this->app->instance(OrderServiceInterface::class, $orderServiceMock);
-        $response = $this->postJson('orders/store', ['cart' => $cart, 'currency' => 'USD']);
+        $response = $this->postJson('api/orders/store', ['cart' => $cart, 'currency' => 'USD']);
         $response->assertStatus(201);
         $response->assertJson(
             [
@@ -175,7 +175,7 @@ class OrdersControllerTest extends TestCase
         $orderServiceMock = \Mockery::spy(OrderServiceInterface::class);
         $orderServiceMock->shouldNotHaveReceive('createOrder');
         $this->app->instance(OrderServiceInterface::class, $orderServiceMock);
-        $response = $this->postJson('orders/store', ['cart' => [], 'currency' => 'USD']);
+        $response = $this->postJson('api/orders/store', ['cart' => [], 'currency' => 'USD']);
         $response->assertStatus(422);
         $response->assertJson(
             [
@@ -250,7 +250,7 @@ class OrdersControllerTest extends TestCase
             ->with($cart, 'USDDDD')
             ->andThrow(new InvalidCurrencyException())->getMock();
         $this->app->instance(OrderServiceInterface::class, $orderServiceMock);
-        $response =$this->postJson('orders/store', ['cart' => $cart, 'currency' => 'USDDDD']);
+        $response =$this->postJson('api/orders/store', ['cart' => $cart, 'currency' => 'USDDDD']);
         $response->assertStatus(422);
         $response->assertJson([ "code" => 422,"message" => "this is invalid currency"]);
     }

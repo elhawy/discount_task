@@ -42,7 +42,7 @@ class OrdersController extends BaseController
      */
     public function store(CreateOrderRequest $request)
     {
-        $createdOrder = $this->orderService->createOrder($request->cart, $request->currency);
+        $createdOrder = $this->orderService->createOrder($request->cart, $request->currency?? '');
         return new OrderResource($createdOrder);
     }
 
