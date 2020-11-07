@@ -12,7 +12,8 @@
 <p>
 	<strong> This My source web site On Currency Convert <a href="https://usd.mconvert.net"> https://usd.mconvert.net</a>< i use <strong> scraping </strong> to get the converted values and it details like name symbol then calculate the ration on this date to get order price as requested on this date</strong> after scrapping the data returned like the flowing code
 <p>
-	<p> <strong> convert 1 USD To EGP </strong>
+	<p> 
+		Convert <strong> 1 USD To EGP </strong>
 	<code> [
 		  "ratio" => 15.69,
 		  "from" => [
